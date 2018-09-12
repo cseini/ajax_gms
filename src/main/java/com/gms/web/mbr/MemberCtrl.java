@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import com.gms.web.cmm.Util;
+
 @Controller
 @RequestMapping("/member")
 @SessionAttributes("user")
@@ -30,8 +32,7 @@ public class MemberCtrl {
 		logger.info("\n--------- MemberController {} !!-----","add()");
 		String val = "add_failed";
 		String gender ="";
-		System.out.println(param.toString());
-		if(!mbrMapper.exist(param.getUserid()).equals("1")) {
+		if(Predicate.isEqual("0").test(mbrMapper.exist(param.getUserid()).equals("1"))) {
 		switch (param.getSsn().split("-")[1]) {
 			case "1":case "3":
 				gender = "남";
@@ -45,11 +46,9 @@ public class MemberCtrl {
 			default:
 				break;
 			}
-			String age = String.valueOf(Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date()))-(Integer.parseInt(param.getSsn().substring(0, 2))+1900-1));
-			param.setAge(age);
+			param.setAge(String.valueOf(Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date()))-(Integer.parseInt(param.getSsn().substring(0, 2))+1900-1)));
 			param.setGender(gender);
 			mbrMapper.insert(param);
-			System.out.println("쿼리 실행완료, 회원가입완료");
 			val="login_failed";
 		} 
 		return val;
@@ -59,9 +58,9 @@ public class MemberCtrl {
 	@RequestMapping("/search")
 	public void search() {}
 	@RequestMapping("/retrieve")
-	public String retrieve(@ModelAttribute("user") Member user) {
+	public String retrieve(@ModelAttribute("member") Member param) {
 		logger.info("\n--------- MemberController {} !!-----","retrieve()");
-		mbrMapper.selectOne(user.getUserid());
+		mbrMapper.selectOne(member.getUserid());
 		return "retrieve";
 	}
 	@RequestMapping("/count")
@@ -73,29 +72,31 @@ public class MemberCtrl {
 		return "retrieve";
 	}
 	@RequestMapping(value="/remove", method=RequestMethod.POST)
-	public String remove(@ModelAttribute Member member,
+	public String remove(@ModelAttribute Member param,
 			@ModelAttribute("user") Member user,
 			SessionStatus session){
 		logger.info("\n--------- MemberController {} !!-----","remove()");
-		member.setUserid(user.getUserid());
-		mbrMapper.delete(member);
+		param.setUserid(user.getUserid());
+		mbrMapper.delete(param);
 		session.setComplete();
 		return "redirect:/";
 	}
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	public String login(Model model, @ModelAttribute("member") Member param) {
 		logger.info("\n--------- MemberController {} !!-----","login()");
-		Predicate<String> p = s -> !s.equals("");
 		String view = "login_failed";
-		if(p.test(mbrMapper.exist(param.getUserid()))) {
+		if(Util.notNull.test(mbrMapper.exist(param.getUserid()))) {
 			Function<Member,String> f = (t)->{
 				return mbrMapper.login(t);
 			};
 			view = (f.apply(param).equals("1")) ? 
 				"login_success":
 				"login_failed";
-			model.addAttribute("user", mbrMapper.selectOne(param.getUserid()));
 		}
+		member = (Predicate.isEqual("login_success").test(view)) ?
+				mbrMapper.selectOne(param.getUserid()):
+				new Member();
+				Util.log.accept(member.toString());
 		return view;
 	}
 	@RequestMapping("/logout")
