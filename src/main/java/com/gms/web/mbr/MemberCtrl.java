@@ -91,7 +91,7 @@ public class MemberCtrl {
 			};
 			view = (f.apply(param).equals("1")) ? 
 				"login_success":
-				"login_failed";
+				"login_failed"; 
 		}
 		member = (Predicate.isEqual("login_success").test(view)) ?
 				mbrMapper.selectOne(param.getUserid()):
