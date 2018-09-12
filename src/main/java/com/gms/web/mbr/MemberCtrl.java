@@ -8,19 +8,18 @@ import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.gms.web.cmm.Util;
 
-@Controller
+@RestController
 @RequestMapping("/member")
-@SessionAttributes("user")
 public class MemberCtrl {
 	static final Logger logger = LoggerFactory.getLogger(MemberCtrl.class);
 	@Autowired Member member;
@@ -73,15 +72,13 @@ public class MemberCtrl {
 	}
 	@RequestMapping(value="/remove", method=RequestMethod.POST)
 	public String remove(@ModelAttribute Member param,
-			@ModelAttribute("user") Member user,
-			SessionStatus session){
+			@ModelAttribute("user") Member user){
 		logger.info("\n--------- MemberController {} !!-----","remove()");
 		param.setUserid(user.getUserid());
 		mbrMapper.delete(param);
-		session.setComplete();
 		return "redirect:/";
 	}
-	@RequestMapping(value="/login", method=RequestMethod.POST)
+	@PostMapping("/login")
 	public String login(Model model, @ModelAttribute("member") Member param) {
 		logger.info("\n--------- MemberController {} !!-----","login()");
 		String view = "login_failed";
@@ -98,12 +95,6 @@ public class MemberCtrl {
 				new Member();
 				Util.log.accept(member.toString());
 		return view;
-	}
-	@RequestMapping("/logout")
-	public String logout(SessionStatus session) {
-		logger.info("\n--------- MemberController {} !!-----","logout()");
-		session.setComplete();
-		return "redirect:/";
 	}
 	@RequestMapping("/fileupload")
 	public void fileupload() {}
