@@ -52,21 +52,33 @@ algo.main = {
 			.attr({id:'ques'}).addClass('text-center').appendTo($t__r);
 			$('<h4/>')
 			.html('시작값 x, 마지막값 y, 공차 d인 수열의 합을 구하시오.').appendTo($('#ques'));
-			$('<label/>')
-			.html('시작값').appendTo($('#ques'));
-			$('<input/>')
-			.attr({id:'sta',type:'text'}).appendTo($('#ques'));
-			$('<br/>').appendTo($('#ques'));
-			$('<label/>')
-			.html('마지막값').appendTo($('#ques'));
-			$('<input/>')
-			.attr({id:'end',type:'text'}).appendTo($('#ques'));
-			$('<br/>').appendTo($('#ques'));
-			$('<label/>')
-			.html('공차').appendTo($('#ques'));
-			$('<input/>')
-			.attr({id:'diff',type:'text'}).appendTo($('#ques'));
-			$('<br/>').appendTo($('#ques'));
+		
+			let arr = [{label:'시작값',id:'sta'},
+						{label:'마지막값',id:'end'},
+						{label:'공차',id:'diff'}];
+			$.each(arr, (i, j)=>{
+				$('<'+'label'+'/>').html(j.label).appendTo($('#ques'));
+				$('<'+'input'+'/>').attr({id:j.id,type:'text'}).appendTo($('#ques'));
+				$('<'+'br'+'/>').appendTo($('#ques'));
+			})
+			/*for(let i in arr){
+				$('<'+'label'+'/>').html(arr[i].l).appendTo($('#ques'));
+				$('<'+'input'+'/>').attr({id:arr[i].i,type:'text'}).appendTo($('#ques'));
+				$('<'+'br'+'/>').appendTo($('#ques'));
+			}*/
+			/*$('<'+'label'+'/>').html('시작값').appendTo($('#ques'));
+			$('<'+'input'+'/>').attr({id:'sta',type:'text'}).appendTo($('#ques'));
+			$('<'+'br'+'/>').appendTo($('#ques'));
+			
+			$('<'+'label'+'/>').html('마지막값').appendTo($('#ques'));
+			$('<'+'input'+'/>').attr({id:'end',type:'text'}).appendTo($('#ques'));
+			$('<'+'br'+'/>').appendTo($('#ques'));
+			
+			$('<'+'label'+'/>').html('공차').appendTo($('#ques'));
+			$('<'+'input'+'/>').attr({id:'diff',type:'text'}).appendTo($('#ques'));
+			$('<'+'br'+'/>').appendTo($('#ques'));*/
+			
+			
 			$('<button/>')
 			.attr({type:'button'})
 			.addClass('btn btn-primary')
@@ -74,9 +86,10 @@ algo.main = {
 			.appendTo('#ques')
 			.click(e=>{
 				$('#h6').remove();
-				var res = "숫자를 입력하세요";
-				var a = $.fn.zeroChecker([$('#sta').val(),$('#end').val(),$('#diff').val()]);
-				if(!a){
+				let res = "숫자를 입력하세요";
+				if(!$.fn.zeroChecker([$('#sta').val(),
+					  $('#end').val(),
+					  $('#diff').val()])){
 					let sta = $('#sta').val()*1;
 					let end = $('#end').val()*1;
 					let diff = $('#diff').val()*1;
@@ -87,7 +100,7 @@ algo.main = {
 						sum=sum+i;
 						i=i+diff;
 					}
-					res = sum;
+					res = "답 : " + sum;
 				}
 				$('<h6/>').attr({id:"h6"}).appendTo('#ques').text(res);
 			})
