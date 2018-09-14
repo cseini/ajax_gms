@@ -19,3 +19,6 @@ $.prototype.zeroChecker=x=>{
 	}
 	return flag;
 }
+$.prototype.label=x=>{
+	return $('<'+'label'+'/>').html(x.label).appendTo($('#'+x.ap));
+}
