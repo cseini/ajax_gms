@@ -34,10 +34,7 @@ algo.main = {
 		.attr({id:'arith'})
 		.addClass('list-group-item text-center')
 		.appendTo($('#side__menu'));
-		$("<a/>")
-		.attr({href:"#"})
-		.html('등차수열의 합')
-		.appendTo($('#arith'))
+		ui.anchor({txt:'등차수열의 합'}).appendTo($('#arith'))
 		.click(e=>{
 			$t__r.empty();
 			$('<div/>')
@@ -45,14 +42,16 @@ algo.main = {
 			$('<h4/>')
 			.html('시작값 x, 마지막값 y, 공차 d인 수열의 합을 구하시오.').appendTo($('#ques'));
 		
-			let arr = [{label:'시작값',id:'sta',ap:'ques'},
-						{label:'마지막값',id:'end',ap:'ques'},
-						{label:'공차',id:'diff',ap:'ques'}];
+			let arr = [{label:'시작값',id:'sta',ap:'ques',type:'text'},
+						{label:'마지막값',id:'end',ap:'ques',type:'text'},
+						{label:'공차',id:'diff',ap:'ques',type:'text'}];
 			$.each(arr, (i,j)=>{
 				$.fn.label(j);
+				$.fn.input(j);
+				$.fn.br(j);
 				/*$('<'+'label'+'/>').html(j.label).appendTo($('#ques'));*/
-				$('<'+'input'+'/>').attr({id:j.id,type:'text'}).appendTo($('#ques'));
-				$('<'+'br'+'/>').appendTo($('#ques'));
+				/*$('<'+'input'+'/>').attr({id:j.id,type:'text'}).appendTo($('#ques'));*/
+				/*$('<'+'br'+'/>').appendTo($('#ques'));*/
 			});
 			/*for(let i in arr){
 			$('<'+'label'+'/>').html(arr[i].label).appendTo($('#ques'));
@@ -109,13 +108,13 @@ algo.main = {
 			$($t__r).empty();
 			$('<div/>').attr({id:'ques'}).addClass('text-center').appendTo($t__r);
 			$('<h4/>').html('시작값 x, 마지막값 y, 공차 d인 수열의 합을 구하시오').appendTo('#ques');
-			let arr = [{label:'시작값',id:'sta'}
-						,{label:'마지막값',id:'end'}
-						,{label:'공차',id:'d'}];
+			let arr = [{label:'시작값',id:'sta',ap:'ques',type:'text'},
+				{label:'마지막값',id:'end',ap:'ques',type:'text'},
+				{label:'공차',id:'diff',ap:'ques',type:'text'}];
 			$.each(arr,(i,j)=>{
-				$('<label/>').html(j.label).appendTo($('#ques'));
-				$('<input/>').attr({id:j.id,type:'text'}).appendTo($('#ques'));
-				$('<br/>').appendTo($('#ques'));
+				$.fn.label(j);
+				$.fn.input(j);
+				$.fn.br(j);
 			});
 			$('<button/>')
 			.attr({id:'bt'})
@@ -356,7 +355,9 @@ algo.router = {
 		$.getScript(x+'/resources/js/router.js',
 			()=>{
 				$.extend(new Session(x));
-				$.getScript($.ctx()+'/resources/js/util.js').done(x=>{console.log('실행');}).fail(x=>{console.log('실패')});
+				$.getScript($.ctx()+'/resources/js/util.js')
+					.done(x=>{console.log('실행');})
+					.fail(x=>{console.log('실패')});
 				algo.main.onCreate();
 			}
 		);
