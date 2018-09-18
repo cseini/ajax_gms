@@ -1,4 +1,5 @@
-function nav(){
+"use strict"
+function footerUI(){
 	return '<footer class="footer bg-light">'
 	+'<div class="container">'
 	+'  <div class="row">'
