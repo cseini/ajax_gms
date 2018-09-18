@@ -18,13 +18,4 @@ $.prototype.zeroChecker=x=>{
 		}
 	}
 	return flag;
-}
-$.prototype.label=x=>{
-	return $('<'+'label'+'/>').html(x.label).appendTo($('#'+x.ap));
-}
-$.prototype.input=x=>{
-	return $('<'+'input'+'/>').attr({id:x.id,type:x.type}).appendTo($('#'+x.ap));
-}
-$.prototype.br=x=>{
-	return $('<'+'br'+'/>').appendTo($('#'+x.ap));
-}
+}	

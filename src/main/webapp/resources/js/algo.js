@@ -12,20 +12,28 @@ algo = {
 		$('#wrapper').empty();
 	}
 };
-algo.main = {
-	onCreate : ()=>{
-		algo.main.setContentView();
-	},
-	setContentView : ()=>{
-		$('#wrapper').html('<h1 class="text-center">알고리즘</h1><h3 class="text-center">수 열</h3><div id="ctn">'
+algo.main =(()=>{
+	var $wrapper,ctx,script,style,img,compo,json,$t__l,$t__r;
+	var onCreate = ()=>{
+		ctx = $.ctx();
+		img = $.img();
+		script = $.script();
+		style = $.style();
+		compo = script + '/compo.js'
+		setContentView();
+	};
+	var setContentView=()=>{
+		$('#wrapper').html('<h1 class="text-center">알고리즘</h1><span id="seq">  수 열 </span>'
+				+'<span id="appl"> 응 용</span><div id="ctn">'
 				+'<table id="tb1" style="width:800px;height:300px;border-collapse:collapse;border:1px solid black;margin:0 auto;margin-bottom:10px;>'
 				+'<tr style="border:1px solid black;">'
 				+'<td id="t__l" style="width:50%;border:1px solid black"></td>'
 				+'<td id="t__r" style="width:50%;border:1px solid black"></td>'
 				+'</tr>'
 				+'</table>');
-		let $t__l = $('#t__l');
-		let $t__r = $('#t__r');
+		$t__l = $('#t__l');
+		$t__r = $('#t__r');
+		
 		$("<ul/>")
 		.attr({id:'side__menu'})
 		.addClass('list-group')
@@ -34,7 +42,11 @@ algo.main = {
 		.attr({id:'arith'})
 		.addClass('list-group-item text-center')
 		.appendTo($('#side__menu'));
-		ui.anchor({txt:'등차수열의 합'}).appendTo($('#arith'))
+		/*ui.anchor({txt:'등차수열의 합'})*/
+		$('<a/>')
+		.attr({href:'#'})
+		.html('등차수열의 합')
+		.appendTo($('#arith'))
 		.click(e=>{
 			$t__r.empty();
 			$('<div/>')
@@ -46,12 +58,9 @@ algo.main = {
 						{label:'마지막값',id:'end',ap:'ques',type:'text'},
 						{label:'공차',id:'diff',ap:'ques',type:'text'}];
 			$.each(arr, (i,j)=>{
-				$.fn.label(j);
-				$.fn.input(j);
-				$.fn.br(j);
-				/*$('<'+'label'+'/>').html(j.label).appendTo($('#ques'));*/
-				/*$('<'+'input'+'/>').attr({id:j.id,type:'text'}).appendTo($('#ques'));*/
-				/*$('<'+'br'+'/>').appendTo($('#ques'));*/
+				$('<'+'label'+'/>').html(j.label).appendTo($('#ques'));
+				$('<'+'input'+'/>').attr({id:j.id,type:'text'}).appendTo($('#ques'));
+				$('<'+'br'+'/>').appendTo($('#ques'));
 			});
 			/*for(let i in arr){
 			$('<'+'label'+'/>').html(arr[i].label).appendTo($('#ques'));
@@ -107,14 +116,14 @@ algo.main = {
 		.click(e=>{
 			$($t__r).empty();
 			$('<div/>').attr({id:'ques'}).addClass('text-center').appendTo($t__r);
-			$('<h4/>').html('시작값 x, 마지막값 y, 공차 d인 수열의 합을 구하시오').appendTo('#ques');
+			$('<h4/>').html('시작값 x, 마지막값 y, 공차 d인 수열의 합을 구하시오.').appendTo('#ques');
 			let arr = [{label:'시작값',id:'sta',ap:'ques',type:'text'},
 				{label:'마지막값',id:'end',ap:'ques',type:'text'},
 				{label:'공차',id:'diff',ap:'ques',type:'text'}];
 			$.each(arr,(i,j)=>{
-				$.fn.label(j);
-				$.fn.input(j);
-				$.fn.br(j);
+				$('<'+'label'+'/>').html(j.label).appendTo($('#ques'));
+				$('<'+'input'+'/>').attr({id:j.id,type:'text'}).appendTo($('#ques'));
+				$('<'+'br'+'/>').appendTo($('#ques'));
 			});
 			$('<button/>')
 			.attr({id:'bt'})
@@ -232,7 +241,43 @@ algo.main = {
 				$('<h6/>').attr({id:'h6'}).text(res).appendTo($('#ques'));
 			});
 		});
-		
+		$('#appl').click(x=>{
+			$t__l.empty();
+			$.getScript(compo,()=>{
+				ui.ul({len:3,id:'menu'}).appendTo($t__l);
+				ui.anchor({txt:'화폐문제'})
+				.appendTo($('#menu-0'))
+				.click(x=>{
+					$('<h6>화폐문제</h6>').appendTo($t__r);
+					ui.input({
+						id : 'money',
+						txt : '입금액'
+						})
+					.appendTo($t__r);
+					ui.button({txt:'전 송',clazz:'primary'}).appendTo($t__r)
+					.click(e=>{
+						//기본적인 ajax 형태!
+						alert('화폐금액 : '+$('#money').val());
+						$.ajax({ 
+							url:ctx+'/algo/money/',
+							method:'post',
+							contentType:'application/json',
+							data : JSON.stringify({money : $('#money').val()}),
+							success :d=>{
+								alert('AJAX 성공이다. '+d.test);
+								
+							},
+							error : (m1,m2,m3)=>{
+								alert('에러발생1'+m1);
+								alert('에러발생2'+m2);
+								alert('에러발생3'+m3);
+							}
+						});
+						
+					});
+				});
+			});
+		})
 		$('#wrapper').append('<h3 class="text-center">행 열</h3>'
 				+'<table id="tb1" style="width:800px;height:300px;border-collapse:collapse;border:1px solid black;margin:0 auto;margin-bottom:10px;>'
 				+'<tr style="border:1px solid black;">'
@@ -241,9 +286,8 @@ algo.main = {
 				+'</tr>'
 				+'</table>'
 				+'</div>');
-		
-		let $t__l1 = $('#t__l1');
 		let $t__r1 = $('#t__r1');
+		let $t__l1 = $('#t__l1');
 		$('<ul/>')
 		.attr({id:'side__menu1'})
 		.addClass('list-group')
@@ -319,9 +363,13 @@ algo.main = {
 		$('<a/>').attr({href:'#'}).text('랭킹 정렬').appendTo($('#ranking')).click(e=>{
 			alert('랭킹 정렬 클릭!');
 		});
-		
-	}
-};
+	};
+	return{
+		onCreate: onCreate,
+		setContentView: setContentView
+	};
+})();
+
 algo.series ={
 	arith : x => {
 		
