@@ -85,40 +85,26 @@ app.permision = (()=>{
 					contentType:'application/json',
 					data:JSON.stringify({userid:$('#userid').val(),password:$('#password').val()}),
 					success:d=>{
-						$.when(
-							$.getScript($.script()+'/auth.js'),
-							$.getScript($.script()+'/header.js'),
-							$.getScript($.script()+'/content.js'),
-							$.getScript($.script()+'/footer.js'),
-							$.Deferred(x=>{
-								$(x.resolve);
-							})
-						).done(()=>{
-							var validate ="";
-							if(d.ID==='CORRECT'){
-								if(d.PW==='CORRECT'){
-									$('#wrapper').html(authUI(d.MBR.name)
-											+headerUI()
-											+contentUI($.img())
-											+footerUI()
-											);
-									$('#retrieve_btn').click(e=>{
-										$('#header').remove();
-										$.getScript($.script()+'/retrieve.js',()=>{
-											$('#content').html(retrieveUI(d));
-										});
+						var validate ="";
+						if(d.ID==='CORRECT'){
+							if(d.PW==='CORRECT'){
+								app.router.home();
+								$('#login_btn').html('로그아웃').click(e=>{
+									app.router.home();
+								});
+								$('#add_btn').html('마이페이지').click(e=>{
+									$('#header').remove();
+									$.getScript($.script()+'/retrieve.js',()=>{
+										$('#content').html(retrieveUI(d));
 									});
-								}else{
-									validate ="비밀번호가 틀렸습니다.";
-								}
+								});
 							}else{
-								validate ="아이디가 없습니다.";
+								validate ="비밀번호가 틀렸습니다.";
 							}
-							$('#validate').text(validate);
-						})
-						.fail(()=>{
-							console.log('화면 구성 실패');
-						});
+						}else{
+							validate ="아이디가 없습니다.";
+						}
+						$('#validate').text(validate);
 					},
 					error:(m1,m2,m3)=>{
 						alert('에러발생'+m3);
@@ -169,5 +155,37 @@ app.router = {
 				app.main.init();
 			}
 		);
+	},
+	home :x=>{
+		$.when(
+			$.getScript($.script()+'/nav.js'),
+			$.getScript($.script()+'/header.js'),
+			$.getScript($.script()+'/content.js'),
+			$.getScript($.script()+'/footer.js'),
+			$.Deferred(y=>{
+				$(y.resolve);
+			})
+		).done(()=>{
+			$('#wrapper').html(navUI()
+					+headerUI()
+					+contentUI($.img())
+					+footerUI()
+					);
+			$('#login_btn').click(e=>{
+				e.preventDefault();
+				app.permision.login();
+			});
+			$('#board').click(e=>{
+				e.preventDefault();
+				app.board.init();
+			})
+			$('#add_btn').click(e=>{
+				e.preventDefault();
+				app.permision.join();
+			})
+		})
+		.fail(()=>{
+			console.log('화면 구성 실패');
+		});
 	}
 };

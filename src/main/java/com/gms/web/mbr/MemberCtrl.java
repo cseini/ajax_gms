@@ -69,8 +69,10 @@ public class MemberCtrl {
 				return mbrMap.get(t);
 			};
 			mbr = f.apply(pm);
+			System.out.println(mbr);
 			pwValid = (mbr != null) ?"CORRECT":"WRONG";
 			mbr = (mbr != null)?mbr:new Member();
+			
 		}
 		rm.put("ID",idValid);
 		rm.put("PW", pwValid);

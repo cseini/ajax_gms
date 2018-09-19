@@ -20,22 +20,17 @@
     		USERID LIKE #{userid}
     	</if>
     	<if test=" password != null and password != '' ">
-    		PASSWORD LIKE #{password}
+    		AND PASSWORD LIKE #{password}
     	</if>
     </where>
   </select>
   <select id="count" resultType="int">
-  	SELECT COUNT(*) FORM MEMBER
+  	SELECT COUNT(*) FROM MEMBER
   	<where>
 	  	<if test=" userid != null and userid != '' ">
 	  		USERID LIKE #{userid}
 	  	</if>
   	</where>
-  </select>
-  <select id="login" resultType="string">
-    SELECT COUNT(USERID) FROM member
-    WHERE USERID LIKE #{userid}
-    AND PASSWORD LIKE #{password}
   </select>
   <update id="update">
 	  UPDATE member SET
