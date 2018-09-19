@@ -3,7 +3,6 @@ package com.gms.web.mbr;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.gms.web.cmm.Util;
+import com.gms.web.cmm.Util2;
 
 @RestController
 @RequestMapping("/member")
@@ -29,17 +27,13 @@ public class MemberCtrl {
 	@PostMapping("/join")
 	public @ResponseBody void join(@RequestBody Member param) {
 		logger.info("\n--------- MemberController {} !!-----","join()");
-		Util.log.accept("넘어온 정보 : " +param);
-		/*mbrMapper.insert(param);*/
+		Util2 u = new Util2();
+		param.setAge(u.ageAndGender(param).getAge());
+		param.setGender(u.ageAndGender(param).getGender());
+		mbrMap.post(param);
 	}
 	@RequestMapping("/search")
 	public void search() {}
-	@RequestMapping("/retrieve")
-	public String retrieve(@ModelAttribute("member") Member param) {
-		logger.info("\n--------- MemberController {} !!-----","retrieve()");
-		mbrMap.get(mbr);
-		return "retrieve";
-	}
 	@RequestMapping("/count")
 	public void count() {}
 	@RequestMapping(value="/modify", method=RequestMethod.POST)
@@ -72,7 +66,6 @@ public class MemberCtrl {
 			System.out.println(mbr);
 			pwValid = (mbr != null) ?"CORRECT":"WRONG";
 			mbr = (mbr != null)?mbr:new Member();
-			
 		}
 		rm.put("ID",idValid);
 		rm.put("PW", pwValid);

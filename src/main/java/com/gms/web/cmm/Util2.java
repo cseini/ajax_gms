@@ -7,10 +7,11 @@ import org.springframework.stereotype.Component;
 import com.gms.web.mbr.Member;
 @Component
 public class Util2 {
-	public Function<Member,Member> ageAndGender(Member mbr) {
+	public Member ageAndGender(Member mbr) {
+		Function<Member,Member> f = m->{
 		String age =String.valueOf(Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date()))-(Integer.parseInt(mbr.getSsn().substring(0, 2))+1900-1));
 		String gender ="";
-		switch (mbr.getSsn().split("-")[1]) {
+		switch (m.getSsn().split("-")[1]) {
 			case "1":case "3":
 				gender = "남";
 				break;
@@ -23,8 +24,10 @@ public class Util2 {
 			default:
 				break;
 		}
-			mbr.setAge(age);
-			mbr.setGender(gender);
-			return (Function<Member, Member>) mbr;
+			m.setAge(age);
+			m.setGender(gender);
+			return m;
+		};
+		return f.apply(mbr);
 	}
 }

@@ -3,7 +3,7 @@ function retrieveUI(x){
 	return '<div id="content-box" class="text-center" >'
 	+'  <table id="mypage-table" class="table table-bordered w-50 m-auto">'
 	+'    <tr>'
-	+'    <td colspan="2" rowspan="3"><img src="${img}/${profile}" alt="" height="300px"/></td> '
+	+'    <td colspan="2" rowspan="3"><img src="resources/img/event1.png" alt="" height="300px"/></td> '
 	+'      <td>아이디</td>'
 	+'      <td>'+x.MBR.userid+'</td>'
 	+'    </tr>'

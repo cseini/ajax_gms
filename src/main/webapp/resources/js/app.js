@@ -37,7 +37,7 @@ app.main =(()=>{
 		).done(()=>{
 			w.html(navUI()
 					+headerUI()
-					+contentUI(img)
+					+contentUI()
 					+footerUI()
 					);
 			$('#login_btn').click(e=>{
@@ -85,26 +85,31 @@ app.permision = (()=>{
 					contentType:'application/json',
 					data:JSON.stringify({userid:$('#userid').val(),password:$('#password').val()}),
 					success:d=>{
-						var validate ="";
-						if(d.ID==='CORRECT'){
-							if(d.PW==='CORRECT'){
-								app.router.home();
-								$('#login_btn').html('로그아웃').click(e=>{
-									app.router.home();
-								});
-								$('#add_btn').html('마이페이지').click(e=>{
-									$('#header').remove();
-									$.getScript($.script()+'/retrieve.js',()=>{
-										$('#content').html(retrieveUI(d));
-									});
-								});
-							}else{
-								validate ="비밀번호가 틀렸습니다.";
-							}
-						}else{
+						let validate ="";
+						if(d.ID==='WRONG'){
 							validate ="아이디가 없습니다.";
+						}else if(d.PW==='WRONG'){
+							validate ="비밀번호가 틀렸습니다.";	
+						}else{
+							/*app.router.home();
+							$('#nav').empty();*/
+							$.getScript($.script()+'/header.js',()=>{
+								$('#content').html(headerUI());	
+							});
+							$.getScript($.script()+'/content.js',()=>{
+								$('#content').append(contentUI());	
+							});
+							$('#board').addClass('btn btn-dark');
+							$('#login_btn').html('로그아웃').click(e=>{
+								app.router.home();
+							});
+							$('#add_btn').html('마이페이지').click(e=>{
+								$.getScript($.script()+'/retrieve.js',()=>{
+									$('#content').html(retrieveUI(d));
+								});
+							});
 						}
-						$('#validate').text(validate);
+						$('#validate').html(validate);
 					},
 					error:(m1,m2,m3)=>{
 						alert('에러발생'+m3);
@@ -129,9 +134,9 @@ app.permision = (()=>{
 						ssn:$('#ssn').val(),
 						email:$('#email').val(),
 						phone:$('#phone').val(),
-						teamid:$('#teamid').val(),
+						teamid:$('[name=teamid]:checked').val(),
 						roll:$('#roll').val(),
-						subject:$('#subject').val()
+						subject:$('[name=subject]:checked').val()
 						}),
 					success:d=>{
 						login();
@@ -156,21 +161,18 @@ app.router = {
 			}
 		);
 	},
-	home :x=>{
+	home :()=>{
 		$.when(
 			$.getScript($.script()+'/nav.js'),
 			$.getScript($.script()+'/header.js'),
 			$.getScript($.script()+'/content.js'),
 			$.getScript($.script()+'/footer.js'),
-			$.Deferred(y=>{
-				$(y.resolve);
-			})
+			$.Deferred(y=>{$(y.resolve);})
 		).done(()=>{
 			$('#wrapper').html(navUI()
 					+headerUI()
-					+contentUI($.img())
-					+footerUI()
-					);
+					+contentUI()
+					+footerUI());
 			$('#login_btn').click(e=>{
 				e.preventDefault();
 				app.permision.login();

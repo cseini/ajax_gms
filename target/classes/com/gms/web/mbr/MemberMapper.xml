@@ -32,7 +32,7 @@
 	  	</if>
   	</where>
   </select>
-  <update id="update">
+  <update id="update" parameterType="com.gms.web.mbr.Member">
 	  UPDATE member SET
 	    PASSWORD = #{password},
 	    TEAMID = #{teamid},
@@ -41,7 +41,7 @@
 	    EMAIL = #{email}
 	  WHERE USERID = #{userid}
   </update>
-  <delete id="delete">
+  <delete id="delete" parameterType="com.gms.web.mbr.Member">
 	  DELETE FROM member
 	  WHERE USERID = #{userid}
 	  AND PASSWORD = #{password}
