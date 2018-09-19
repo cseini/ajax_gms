@@ -1,6 +1,6 @@
 "use strict"
 function navUI(){
-	return '<nav class="navbar navbar-light bg-light static-top">'
+	return '<nav id="nav" class="navbar navbar-light bg-light static-top">'
 	+'  <div class="container">'
 	+'    <a id="logo_btn" class="navbar-brand" >Yanolja!</a>'
 	+'    <div class="float-right">'

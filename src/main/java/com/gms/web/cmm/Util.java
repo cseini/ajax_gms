@@ -12,5 +12,7 @@ public class Util {
 	public static Function<Integer, String> convStr = String::valueOf;
 	public static Predicate<String> isNull = s -> s.equals("");
 	public static Predicate<String> notNull = isNull.negate();
+	public static Predicate<String> isOne = s -> s.equals("1");
+	public static Predicate<String> notOne = isOne.negate();
 	public static Function<HttpServletRequest,String> ctx = HttpServletRequest::getContextPath;
 }

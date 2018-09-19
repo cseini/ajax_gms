@@ -1,20 +1,20 @@
 package com.gms.web.mbr;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.support.SessionStatus;
 
 import com.gms.web.cmm.Util;
 
@@ -22,44 +22,22 @@ import com.gms.web.cmm.Util;
 @RequestMapping("/member")
 public class MemberCtrl {
 	static final Logger logger = LoggerFactory.getLogger(MemberCtrl.class);
-	@Autowired Member member;
-	@Autowired MemberMapper mbrMapper;
+	@Autowired Member mbr;
+	@Autowired MemberMapper mbrMap;
 	/*이게 자바의 new member같이 스프링에서 가져오는 싱글톤객체*/
-	@Autowired MemberService memberService;
-	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public String add(@ModelAttribute("member") Member param) {
-		logger.info("\n--------- MemberController {} !!-----","add()");
-		String val = "add_failed";
-		String gender ="";
-		if(Predicate.isEqual("0").test(mbrMapper.exist(param.getUserid()).equals("1"))) {
-		switch (param.getSsn().split("-")[1]) {
-			case "1":case "3":
-				gender = "남";
-				break;
-			case "2":case "4":
-				gender = "여";
-				break;
-			case "5":case "6":
-				gender = "외국인";
-				break;
-			default:
-				break;
-			}
-			param.setAge(String.valueOf(Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date()))-(Integer.parseInt(param.getSsn().substring(0, 2))+1900-1)));
-			param.setGender(gender);
-			mbrMapper.insert(param);
-			val="login_failed";
-		} 
-		return val;
+	
+	@PostMapping("/join")
+	public @ResponseBody void join(@RequestBody Member param) {
+		logger.info("\n--------- MemberController {} !!-----","join()");
+		Util.log.accept("넘어온 정보 : " +param);
+		/*mbrMapper.insert(param);*/
 	}
-	@RequestMapping("/list")
-	public void list() {}
 	@RequestMapping("/search")
 	public void search() {}
 	@RequestMapping("/retrieve")
 	public String retrieve(@ModelAttribute("member") Member param) {
 		logger.info("\n--------- MemberController {} !!-----","retrieve()");
-		mbrMapper.selectOne(member.getUserid());
+		mbrMap.get(mbr);
 		return "retrieve";
 	}
 	@RequestMapping("/count")
@@ -67,7 +45,7 @@ public class MemberCtrl {
 	@RequestMapping(value="/modify", method=RequestMethod.POST)
 	public String modify(@ModelAttribute("user") Member user) {
 		logger.info("\n--------- MemberController {} !!-----","modify()");
-		mbrMapper.update(user);
+		mbrMap.put(user);
 		return "retrieve";
 	}
 	@RequestMapping(value="/remove", method=RequestMethod.POST)
@@ -75,27 +53,28 @@ public class MemberCtrl {
 			@ModelAttribute("user") Member user){
 		logger.info("\n--------- MemberController {} !!-----","remove()");
 		param.setUserid(user.getUserid());
-		mbrMapper.delete(param);
+		mbrMap.delete(param);
 		return "redirect:/";
 	}
 	@PostMapping("/login")
-	public String login(Model model, @ModelAttribute("member") Member param) {
+	public @ResponseBody Map<String,Object> login(
+			@RequestBody Member pm) {
 		logger.info("\n--------- MemberController {} !!-----","login()");
-		String view = "login_failed";
-		if(Util.notNull.test(mbrMapper.exist(param.getUserid()))) {
-			Function<Member,String> f = (t)->{
-				return mbrMapper.login(t);
+		Map<String,Object> rm =  new HashMap<>();
+		String pwValid = "WRONG";
+		String idValid ="WRONG";
+		if(mbrMap.count(pm)!=0) {
+			idValid ="CORRECT";
+			Function<Member,Member> f = (t)->{
+				return mbrMap.get(t);
 			};
-			view = (f.apply(param).equals("1")) ? 
-				"login_success":
-				"login_failed"; 
+			mbr = f.apply(pm);
+			pwValid = (mbr != null) ?"CORRECT":"WRONG";
+			mbr = (mbr != null)?mbr:new Member();
 		}
-		member = (Predicate.isEqual("login_success").test(view)) ?
-				mbrMapper.selectOne(param.getUserid()):
-				new Member();
-				Util.log.accept(member.toString());
-		return view;
+		rm.put("ID",idValid);
+		rm.put("PW", pwValid);
+		rm.put("MBR", mbr);
+		return rm;
 	}
-	@RequestMapping("/fileupload")
-	public void fileupload() {}
 }

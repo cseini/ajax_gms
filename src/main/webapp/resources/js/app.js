@@ -37,7 +37,7 @@ app.main =(()=>{
 		).done(()=>{
 			w.html(navUI()
 					+headerUI()
-					+contentUI()
+					+contentUI(img)
 					+footerUI()
 					);
 			$('#login_btn').click(e=>{
@@ -48,9 +48,13 @@ app.main =(()=>{
 				e.preventDefault();
 				app.board.init();
 			})
+			$('#add_btn').click(e=>{
+				e.preventDefault();
+				app.permision.join();
+			})
 		})
 		.fail(x=>{
-			
+			console.log('화면 구성 실패');
 		});
 	};
 	return {init:init};
@@ -72,12 +76,87 @@ app.board =(()=>{
 app.permision = (()=>{
 	var login = ()=>{
 		$('#header').remove();
-		$('#content').empty();
 		$.getScript($.script()+'/loginBox.js',()=>{
 			$('#content').html(loginBoxUI());
+			$('#login_form_btn').click(e=>{
+					$.ajax({
+					url:$.ctx()+'/member/login',
+					method:'post',
+					contentType:'application/json',
+					data:JSON.stringify({userid:$('#userid').val(),password:$('#password').val()}),
+					success:d=>{
+						$.when(
+							$.getScript($.script()+'/auth.js'),
+							$.getScript($.script()+'/header.js'),
+							$.getScript($.script()+'/content.js'),
+							$.getScript($.script()+'/footer.js'),
+							$.Deferred(x=>{
+								$(x.resolve);
+							})
+						).done(()=>{
+							var validate ="";
+							if(d.ID==='CORRECT'){
+								if(d.PW==='CORRECT'){
+									$('#wrapper').html(authUI(d.MBR.name)
+											+headerUI()
+											+contentUI($.img())
+											+footerUI()
+											);
+									$('#retrieve_btn').click(e=>{
+										$('#header').remove();
+										$.getScript($.script()+'/retrieve.js',()=>{
+											$('#content').html(retrieveUI(d));
+										});
+									});
+								}else{
+									validate ="비밀번호가 틀렸습니다.";
+								}
+							}else{
+								validate ="아이디가 없습니다.";
+							}
+							$('#validate').text(validate);
+						})
+						.fail(()=>{
+							console.log('화면 구성 실패');
+						});
+					},
+					error:(m1,m2,m3)=>{
+						alert('에러발생'+m3);
+					}
+				})
+			})
+			
 		});
 	}
-	return {login : login}
+	var join =()=>{
+		$('#header').remove();
+		$.getScript($.script()+'/join.js',()=>{
+			$('#content').html(joinUI());
+			$('#join_form_btn').click(e=>{
+				$.ajax({
+					url:$.ctx()+'/member/join',
+					method:'post',
+					contentType:'application/json',
+					data:JSON.stringify({userid:$('#userid').val(),
+						password:$('#password').val(),
+						name:$('#name').val(),
+						ssn:$('#ssn').val(),
+						email:$('#email').val(),
+						phone:$('#phone').val(),
+						teamid:$('#teamid').val(),
+						roll:$('#roll').val(),
+						subject:$('#subject').val()
+						}),
+					success:d=>{
+						login();
+					},
+					error:(m1,m2,m3)=>{alert(m3);}
+				});
+			});
+		})
+	}
+	return {login : login,
+			join : join}
 })();
 app.router = {
 	init :x=>{
