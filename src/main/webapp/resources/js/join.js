@@ -3,7 +3,6 @@ function joinUI(){
 	return '<div class="container text-center">'
 	+'	<div id="content-box">'
 	+'		<h1>회원가입</h1><br />'
-	+'		<form id="join_form" >'
 	+'			<div id="join_form_textbox" >'
 	+'				<input type="text" name="userid" id="userid" placeholder="아이디를 입력하세요." required="required"/><br /><br />'
 	+'				<input type="password" name="password" id="password" placeholder="비밀번호를 입력하세요." required="required"/><br /><br />'
@@ -36,8 +35,6 @@ function joinUI(){
 	+'				<input type="checkbox" name="subject" value="HTML" /> HTML'
 	+'				<input type="checkbox" name="subject" value="Spring" /> Spring<br /><br />'
 	+'			</div>'
-	+'		</form>'
-	+'		<a id="join_form_btn" class="btn btn-primary w-300px">가입하기</a>'
 	+'	</div>'
 	+'</div>';
 }

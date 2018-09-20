@@ -14,13 +14,12 @@ function headerUI(){
 +'            <input type="search" class="form-control form-control-lg" placeholder="지역 또는 숙소명을 입력하세요.">'
 +'          </div>'
 +'          <div class="col-12 col-md-3">'
-+'            <button type="submit" class="btn btn-block btn-lg btn-primary">검 색</button>'
++'            <button type="submit" class="btn btn-block btn-lg btn-danger">검 색</button>'
 +'          </div>'
 +'        </div>'
 +'      </form>'
 +'    </div>'
 +'  </div>'
 +'</div>'
-+'</header>'
-;
++'</header>';
 }

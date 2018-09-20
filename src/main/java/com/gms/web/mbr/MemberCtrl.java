@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.gms.web.cmm.Util;
 import com.gms.web.cmm.Util2;
 
 @RestController
@@ -22,14 +24,12 @@ public class MemberCtrl {
 	static final Logger logger = LoggerFactory.getLogger(MemberCtrl.class);
 	@Autowired Member mbr;
 	@Autowired MemberMapper mbrMap;
-	/*이게 자바의 new member같이 스프링에서 가져오는 싱글톤객체*/
-	
+	@Autowired Util2 util2;
 	@PostMapping("/join")
 	public @ResponseBody void join(@RequestBody Member param) {
 		logger.info("\n--------- MemberController {} !!-----","join()");
-		Util2 u = new Util2();
-		param.setAge(u.ageAndGender(param).getAge());
-		param.setGender(u.ageAndGender(param).getGender());
+		param.setAge(util2.ageAndGender(param).getAge());
+		param.setGender(util2.ageAndGender(param).getGender());
 		mbrMap.post(param);
 	}
 	@RequestMapping("/search")

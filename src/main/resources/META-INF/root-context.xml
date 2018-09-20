@@ -19,7 +19,6 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 	<mvc:annotation-driven />
 	<mvc:resources mapping="/resources/**" location="/resources/" />
-	<mvc:resources mapping="/other_resources/**" location="/other_resources/" />
 	
 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
  		<property name="viewResolvers">
