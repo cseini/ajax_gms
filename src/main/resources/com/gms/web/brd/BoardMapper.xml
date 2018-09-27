@@ -4,76 +4,70 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.gms.web.brd.BoardMapper">
-<!-- 
+	<select id="listAll" resultType="com.gms.web.brd.Board">
+          SELECT *
+           FROM (
+            SELECT row_number() over() as No, A.*
+            FROM (
+            SELECT *
+            FROM board) A
+            ORDER BY No DESC) B
+            WHERE NO BETWEEN #{beginRow} AND #{endRow}
+    </select>
+	
 	<insert id="create">
-		insert into tbl_board (title, content, writer)
+		insert into board (title, content, writer)
 		values(#{title},#{content}, #{writer})
 	</insert>
 
-	<select id="read" resultType="org.zerock.domain.BoardVO">
+	<select id="read" resultType="com.gms.web.brd.Board">
 		select
 		bno, title, content, writer, regdate, viewcnt , replycnt
 		from
-		tbl_board
+		board
 		where bno = #{bno}
 	</select>
 
-	<select id="listAll" resultType="org.zerock.domain.BoardVO">
- <![CDATA[
- select 
-   bno, title, content, writer, regdate, viewcnt 
- from 
-   tbl_board 
- where bno > 0 
- order by bno desc, regdate desc
- ]]>
+
+	<select id="listPage" resultType="com.gms.web.brd.Board">
+		 select 
+		   bno, title, content, writer, regdate, viewcnt , replycnt
+		 from 
+		   board 
+		 where bno > 0 
+		 order by bno desc, regdate desc
+		 limit #{page}, 10
 	</select>
 
-	<select id="listPage" resultType="BoardVO">
- <![CDATA[
- select 
-   bno, title, content, writer, regdate, viewcnt , replycnt
- from 
-   tbl_board 
- where bno > 0 
- order by bno desc, regdate desc
- limit #{page}, 10
- ]]>
-	</select>
-
-	<select id="listCriteria" resultType="BoardVO">
- <![CDATA[
- select 
-   bno, title, content, writer, regdate, viewcnt , replycnt
- from 
-   tbl_board 
- where bno > 0 
- order by bno desc, regdate desc
- limit #{pageStart}, #{perPageNum}
- ]]>
+	<select id="listCriteria" resultType="com.gms.web.brd.Board">
+		 select 
+		   bno, title, content, writer, regdate, viewcnt , replycnt
+		 from 
+		   board 
+		 where bno > 0 
+		 order by bno desc, regdate desc
+		 limit #{pageStart}, #{perPageNum}
 	</select>
 
 
 	<update id="update">
-		update tbl_board set title =#{title}, content =#{content}
+		update board set title =#{title}, content =#{content}
 		where bno = #{bno}
 	</update>
 
 	<delete id="delete">
-		delete from tbl_board where bno = #{bno}
+		delete from board where bno = #{bno}
 	</delete>
 
 
 
 	<select id="countPaging" resultType="int">
- <![CDATA[
- select 
-   count(bno) 
- from 
-   tbl_board 
- where 
-   bno > 0 
- ]]>
+		 select 
+		   count(bno) 
+		 from 
+		   board 
+		 where 
+		   bno > 0 
 	</select>
 
 
@@ -107,27 +101,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 	</sql>
 
-	<select id="listSearch" resultType="BoardVO">
-<![CDATA[  
-  select * 
-  from tbl_board 
-  where bno > 0 
-]]>
+	<select id="listSearch" resultType="com.gms.web.brd.Board">
+		  select * 
+		  from board 
+		  where bno > 0 
 
 		<include refid="search"></include>
   
-<![CDATA[    
-  order by bno desc
-  limit #{pageStart}, #{perPageNum}
-]]>
+		  order by bno desc
+		  limit #{pageStart}, #{perPageNum}
 	</select>
 
 	<select id="listSearchCount" resultType="int">
-<![CDATA[  
-  select count(bno) 
-  from tbl_board 
-  where bno > 0 
-]]>
+		  select count(bno) 
+		  from board 
+		  where bno > 0 
 		<include refid="search"></include>
 
 	</select>
@@ -135,12 +123,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
  
 <update id="updateReplyCnt">
-  update tbl_board set replycnt = replycnt + #{amount} where bno = #{bno}
+  update board set replycnt = replycnt + #{amount} where bno = #{bno}
 </update>
 
 
 <update id="updateViewCnt">
-  update tbl_board set viewcnt = viewcnt +1 where bno = #{bno}
+  update board set viewcnt = viewcnt +1 where bno = #{bno}
 </update>
 
 
@@ -162,6 +150,5 @@ delete from tbl_attach where bno = #{bno}
 <insert id="replaceAttach">
 insert into tbl_attach(fullname, bno) values (#{fullName}, #{bno})
 </insert>
-   -->
  
 </mapper>

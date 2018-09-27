@@ -10,18 +10,13 @@
 <section class="content">
 	<div class="row">
 		<!-- left column -->
-
-
 		<div class="col-md-12">
 			<!-- general form elements -->
 			<div class='box'>
 				<div class="box-header with-border">
 					<h3 class="box-title">Board List</h3>
 				</div>
-
-
 				<div class='box-body'>
-
 					<select name="searchType">
 						<option value="n"
 							<c:out value="${cri.searchType == null?'selected':''}"/>>

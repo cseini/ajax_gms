@@ -34,5 +34,30 @@ var ui = {
 	button : x =>{
 		/*default(outline), primary(blue), success(green), info(light blue), warning(yellow), danger(red), dark(blakc), light(white), link(trans)*/
 		return $('<button/>').attr('type','button').addClass('btn btn-'+x.clazz).html(x.txt);
+	},
+	tbl : x =>{
+		/*<div class="panel panel-default">
+		 *  <!-- Default panel contents --> 
+		 *  <div class="panel-heading">Panel heading</div> 
+		 *  <div class="panel-body"> <p>...</p> </div> 
+		 *  <!-- Table --> 
+		 *  <table class="table"> ... </table> 
+		 *  </div>*/
+		let d = $('<div/>').addClass('panel panel-'+x.type);
+		let ph = $('<div/>').addClass('panel-heading').html(x.head);
+		let pb = $('<div/>').addClass('pannel-body').html('<p>'+x.body+'</p>');
+		let t = $('<table/>').attr({id:x.id}).addClass(x.clazz);
+		let thead = $('<thead/>')
+		let tr= $('<tr/>');
+		$.each(x.list,(i,j)=>{
+			$('<th/>').html(j).appendTo(tr);
+		})
+		tr.appendTo(thead);
+		thead.appendTo(t);
+		$('<tbody/>').appendTo(t);
+		ph.appendTo(d);
+		pb.appendTo(d);
+		t.appendTo(d)
+		return d;
 	}
 }

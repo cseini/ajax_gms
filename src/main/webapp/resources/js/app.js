@@ -64,16 +64,49 @@ app.main =(()=>{
 	return {init:init};
 })();
 app.board =(()=>{
+	var w, nav, header, content, footer, ctx, script, style,img,loginBox;
 	var init =()=>{
+		ctx = $.ctx();
+		script = $.script();
+		style = $.style();
+		img = $.img();
+		w=$('#wrapper');
+		nav=script+'/nav.js';
+		header=script+'/header.js';
+		content=script+'/content.js';
+		footer=script+'/footer.js';
+		loginBox=script+'/loginBox.js';
 		onCreate();
 	};
 	var onCreate =()=>{
 		setContentView();
 	};
 	var setContentView =()=>{
-		alert('Board');
 		$('#header').remove();
 		$('#content').empty();
+		$.getJSON(ctx+'/boards/1',d=>{
+			$.getScript($.script()+'/compo.js',()=>{
+				let x = {
+						type : 'default',
+						id : 'table',
+						head :'게시판',
+						body : '오픈게시판...',
+						list : ['No.','제목','내용','작성자','작성일','조회수'],
+						clazz : 'table table-bordered'
+				}
+				ui.tbl(x).appendTo($('#content'));
+				$.each(d,(i,j)=>{
+					$('<tr/>').append(
+					$('<td/>').attr('width','5%').html(j.bno),
+					$('<td/>').attr('width','10%').html(j.title),
+					$('<td/>').attr('width','50%').html(j.content),
+					$('<td/>').attr('width','10%').html(j.writer),
+					$('<td/>').attr('width','5%').html(j.regdate),
+					$('<td/>').attr('width','10%').html(j.viewcnt)
+					).appendTo($('tbody'));
+				})
+			})
+		})
 	};
 	return {init:init};
 })();
