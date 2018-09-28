@@ -82,31 +82,7 @@ app.board =(()=>{
 		setContentView();
 	};
 	var setContentView =()=>{
-		$('#header').remove();
-		$('#content').empty();
-		$.getJSON(ctx+'/boards/1',d=>{
-			$.getScript($.script()+'/compo.js',()=>{
-				let x = {
-						type : 'default',
-						id : 'table',
-						head :'게시판',
-						body : '오픈게시판...',
-						list : ['No.','제목','내용','작성자','작성일','조회수'],
-						clazz : 'table table-bordered'
-				}
-				ui.tbl(x).appendTo($('#content'));
-				$.each(d.list,(i,j)=>{
-					$('<tr/>').append(
-					$('<td/>').attr('width','5%').html(j.bno),
-					$('<td/>').attr('width','10%').html(j.title),
-					$('<td/>').attr('width','50%').html(j.content),
-					$('<td/>').attr('width','10%').html(j.writer),
-					$('<td/>').attr('width','5%').html(j.regdate),
-					$('<td/>').attr('width','10%').html(j.viewcnt)
-					).appendTo($('tbody'));
-				})
-			})
-		})
+		app.service.boards(1)
 	};
 	return {init:init};
 })();
@@ -117,7 +93,6 @@ app.permision = (()=>{
 			$.getScript($.script()+'/loginBox.js',()=>{
 				$('#content').html(loginBoxUI());
 				ui.anchor({id:'login_form_btn',txt:'로그인'})
-				.css({'width':'300px'})
 				.addClass('btn btn-danger btn-lg')
 				.appendTo($('#content-box')).click(e=>{
 						$.ajax({
@@ -180,7 +155,7 @@ app.permision = (()=>{
 		$.getScript($.script()+'/compo.js',()=>{
 			$.getScript($.script()+'/join.js',()=>{
 				$('#content').html(joinUI());
-				$('#join_form_textbox').css({'text-align':'center'});
+				$('#join_form_textbox');
 				/*$('[name="subject"]')
 				.change(function(){
 					alert($(this).val());
@@ -192,7 +167,7 @@ app.permision = (()=>{
 					e.preventDefault();
 					var arr=[];
 					var a='';
-					let i;
+					let i='';
 					for(i of $("[name=subject]")){
 						if(i.checked){
 							alert('선택된 과목'+i.value);
@@ -224,9 +199,66 @@ app.permision = (()=>{
 		})
 		
 	}
-	return {login : login,
-			join : join}
+	return {login : login, join : join}
 })();
+app.service ={
+	boards : x=>{
+			$.getJSON($.ctx()+'/boards/'+x,d=>{
+				$.getScript($.script()+'/compo.js',()=>{
+					$('#header').remove();
+					$('#content').empty();
+					let x = {
+							type : 'default',
+							id : 'table',
+							head :'게시판',
+							body : '오픈게시판...',
+							list : ['No.','제목','내용','작성자','작성일','조회수'],
+							clazz : 'table table-bordered text-center'
+					}
+					ui.tbl(x).appendTo($('#content'));
+					$.each(d.list,(i,j)=>{
+						$('<tr/>').append(
+						$('<td/>').attr('width','5%').html(j.bno),
+						$('<td/>').attr('width','10%').html(j.title),
+						$('<td/>').attr('width','55%').html(j.content),
+						$('<td/>').attr('width','5%').html(j.writer),
+						$('<td/>').attr('width','10%').html(j.regdate),
+						$('<td/>').attr('width','5%').html(j.viewcnt)
+						).appendTo($('tbody'));
+					})
+					ui.page({}).appendTo($('#content'));
+					let ul = $('.pagination');
+					let liPrev = $('<li/>').addClass('page-item '+((!d.page.existPrev)?'disabled':'')).append($('<span/>').addClass('page-link').html('Previous'));
+					let liNext = $('<li/>').addClass('page-item '+((!d.page.existNext)?'disabled':'')).append($('<span/>').addClass('page-link').html('Next'));
+					liPrev.appendTo($('#ul'))
+					.click(e=>{
+						e.preventDefault();
+						if(d.page.existPrev){
+							app.service.boards(d.page.prevBlock);
+						}
+					});
+					for(let i=d.page.beginPage;i<=d.page.endPage;i++){
+						$('<li/>').addClass('page-item '+((i==d.page.pageNumber)?'active':'')).append(
+							$('<span/>').addClass('page-link').html(i))
+							.appendTo(ul)
+							.click(e=>{
+								e.preventDefault();
+								$.getJSON($.ctx()+'/boards/'+i,d=>{
+									app.service.boards(i);
+								})
+						});
+					}
+					liNext.appendTo(ul)
+					.click(e=>{
+						e.preventDefault();
+						if(d.page.existNext){
+							app.service.boards(d.page.nextBlock);
+						}
+					});
+				})
+			})
+	}
+};
 app.router = {
 	init :x=>{
 		$.getScript(x+'/resources/js/router.js',

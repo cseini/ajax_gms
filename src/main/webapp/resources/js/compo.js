@@ -29,13 +29,6 @@ var ui = {
 		return $('<button/>').attr('type','button').addClass('btn btn-'+x.clazz).html(x.txt);
 	},
 	tbl : x =>{
-		/*<div class="panel panel-default">
-		 *  <!-- Default panel contents --> 
-		 *  <div class="panel-heading">Panel heading</div> 
-		 *  <div class="panel-body"> <p>...</p> </div> 
-		 *  <!-- Table --> 
-		 *  <table class="table"> ... </table> 
-		 *  </div>*/
 		let d = $('<div/>').addClass('panel panel-'+x.type);
 		let ph = $('<div/>').addClass('panel-heading').html(x.head);
 		let pb = $('<div/>').addClass('pannel-body').html('<p>'+x.body+'</p>');
@@ -54,24 +47,6 @@ var ui = {
 		return d;
 	},
 	page : x=>{
-		/*<nav aria-label="...">
-		  <ul class="pagination">
-		    <li class="page-item disabled">
-		      <span class="page-link">Previous</span>
-		    </li>
-		    <li class="page-item"><a class="page-link" href="#">1</a></li>
-		    <li class="page-item active">
-		      <span class="page-link">
-		        2
-		        <span class="sr-only">(current)</span>
-		      </span>
-		    </li>
-		    <li class="page-item"><a class="page-link" href="#">3</a></li>
-		    <li class="page-item">
-		      <a class="page-link" href="#">Next</a>
-		    </li>
-		  </ul>
-		</nav>*/
-		
+		return $('<ul/>').attr({id:'ul'}).addClass('pagination justify-content-center').appendTo($('<nav/>').attr('aria-label','페이지네이션'));
 	}
 }
