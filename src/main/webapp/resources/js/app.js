@@ -95,7 +95,7 @@ app.board =(()=>{
 						clazz : 'table table-bordered'
 				}
 				ui.tbl(x).appendTo($('#content'));
-				$.each(d,(i,j)=>{
+				$.each(d.list,(i,j)=>{
 					$('<tr/>').append(
 					$('<td/>').attr('width','5%').html(j.bno),
 					$('<td/>').attr('width','10%').html(j.title),

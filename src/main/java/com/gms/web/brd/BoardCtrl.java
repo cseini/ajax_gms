@@ -24,14 +24,17 @@ public class BoardCtrl {
 	@Autowired BoardMapper brdMap;
 	@Autowired Pagination page;
 	@RequestMapping("/boards/{pageNo}")
-	public @ResponseBody List<Board> list(@PathVariable int pageNo){
+	public @ResponseBody Map<String,Object> list(@PathVariable int pageNo){
 		logger.info("\n BoardCtrl :::::::::: {} !!-----","list");
 		Map<String,Object> param=new HashMap<>();
 		param.put("pageNumber",pageNo);
-		param.put("countRow",brdMap.listAll(page).size());
+		param.put("countRow",brdMap.countAll());
 		page.carryOut(param);
+		param.clear();
 		List<Board> ls = brdMap.listAll(page);
+		param.put("page", page);
+		param.put("list", ls);
 		Util.log.accept("게시글 리스트 :"+ls);
-		return ls;
+		return param;
 	}
 }

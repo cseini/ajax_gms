@@ -19,13 +19,6 @@ var ui = {
 						+ x.txt
 						+'</span>'
 						+'<input id="'+x.id+'" type="text" placeholder="입금액" class="form-control" aria-label="Username" aria-describedby="basic-addon1"></input>').appendTo(y);
-		/*$("<input/>").attr({
-			id : x.id,
-			type: 'text',
-			placeholder:"입금액" ,
-			"aria-label":"Username", 
-			"aria-describedby":"basic-addon1"
-		}).addClass("form-control").appendTo(y);*/
 		return y;
 	},
 	label : x=>{
@@ -57,7 +50,28 @@ var ui = {
 		$('<tbody/>').appendTo(t);
 		ph.appendTo(d);
 		pb.appendTo(d);
-		t.appendTo(d)
+		t.appendTo(d);
 		return d;
+	},
+	page : x=>{
+		/*<nav aria-label="...">
+		  <ul class="pagination">
+		    <li class="page-item disabled">
+		      <span class="page-link">Previous</span>
+		    </li>
+		    <li class="page-item"><a class="page-link" href="#">1</a></li>
+		    <li class="page-item active">
+		      <span class="page-link">
+		        2
+		        <span class="sr-only">(current)</span>
+		      </span>
+		    </li>
+		    <li class="page-item"><a class="page-link" href="#">3</a></li>
+		    <li class="page-item">
+		      <a class="page-link" href="#">Next</a>
+		    </li>
+		  </ul>
+		</nav>*/
+		
 	}
 }

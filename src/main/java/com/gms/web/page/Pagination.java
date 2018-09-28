@@ -14,11 +14,11 @@ public class Pagination implements Proxy {
 	@Override
 	public void carryOut(Map<?,?> param) {
 		this.pageNumber = (int) param.get("pageNumber");
+		this.countRow =(int) param.get("countRow");
 		this.pageSize=5;
 		this.blockSize=5;
 		this.beginRow = pageNumber*pageSize-(pageSize-1);
 		this.endRow = pageNumber*pageSize;
-		this.countRow =(int) param.get("countRow");
 		this.pageCount = countRow%pageSize==0?countRow/pageSize:countRow/pageSize+1;
 		this.blockCount = pageCount%blockSize==0?pageCount/blockSize:pageCount/blockSize+1;
 		this.beginPage= pageNumber-((pageNumber-1)%blockSize);

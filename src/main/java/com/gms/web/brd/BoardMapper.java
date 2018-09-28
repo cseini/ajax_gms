@@ -18,6 +18,7 @@ public interface BoardMapper {
   public List<Board> listPage(int page);
   public List<Board> listCriteria(Criteria cri);
   public int countPaging(Criteria cri);
+  public int countAll();
   
   //use for dynamic sql
   public List<Board> listSearch(SearchCriteria cri);
