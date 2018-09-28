@@ -19,6 +19,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT COUNT(*)
 		FROM board    
     </select>
+    
+	<select id="listRetrieve" resultType="com.gms.web.brd.Board">
+       SELECT *
+    		FROM (
+    		 SELECT
+             ROW_NUMBER() OVER(ORDER BY BNO DESC) AS NUM,
+             A.*
+   	         FROM
+             BOARD A 
+             WHERE writer LIKE #{writer} )B
+       WHERE B.NUM BETWEEN #{beginRow} AND #{endRow}
+       ORDER BY B.NUM
+    </select>
+    <select id="countRetrieve" resultType="int">
+		SELECT COUNT(*)
+		FROM board   
+		WHERE writer LIKE #{writer} 
+    </select>
 	
 	<insert id="create">
 		insert into board (title, content, writer)

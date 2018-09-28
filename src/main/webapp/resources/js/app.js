@@ -118,10 +118,11 @@ app.permision = (()=>{
 									app.router.home();
 								})
 								$('#board').remove();
-								ui.anchor({id:'board',txt:'게시판'})
+								ui.anchor({id:'my_board',txt:'내게시판'})
 								.addClass('btn btn-info btn-lg')
-								.appendTo($('#nav_right')).click(e=>{
-									app.router.home();
+								.appendTo($('#nav_right'))
+								.click(e=>{
+									app.service.my_board({id:d.MBR.userid,pageNo:1});
 								});
 								$('#board').addClass('btn btn-info');
 								$('#login_btn').remove();
@@ -243,9 +244,7 @@ app.service ={
 							.appendTo(ul)
 							.click(e=>{
 								e.preventDefault();
-								$.getJSON($.ctx()+'/boards/'+i,d=>{
-									app.service.boards(i);
-								})
+								app.service.boards(i);
 						});
 					}
 					liNext.appendTo(ul)
@@ -257,6 +256,60 @@ app.service ={
 					});
 				})
 			})
+	},
+	my_board : x=>{
+		$.getJSON($.ctx()+'/boards/'+x.id+'/'+x.pageNo,d=>{
+			$.getScript($.script()+'/compo.js',()=>{
+				$('#header').remove();
+				$('#content').empty();
+				let x = {
+						type : 'default',
+						id : 'table',
+						head :'게시판',
+						body : '오픈게시판...',
+						list : ['No.','제목','내용','작성자','작성일','조회수'],
+						clazz : 'table table-bordered text-center'
+				}
+				ui.tbl(x).appendTo($('#content'));
+				$.each(d.list,(i,j)=>{
+					$('<tr/>').append(
+					$('<td/>').attr('width','5%').html(j.bno),
+					$('<td/>').attr('width','10%').html(j.title),
+					$('<td/>').attr('width','55%').html(j.content),
+					$('<td/>').attr('width','5%').html(j.writer),
+					$('<td/>').attr('width','10%').html(j.regdate),
+					$('<td/>').attr('width','5%').html(j.viewcnt)
+					).appendTo($('tbody'));
+				})
+				ui.page({}).appendTo($('#content'));
+				let ul = $('.pagination');
+				let liPrev = $('<li/>').addClass('page-item '+((!d.page.existPrev)?'disabled':'')).append($('<span/>').addClass('page-link').html('Previous'));
+				let liNext = $('<li/>').addClass('page-item '+((!d.page.existNext)?'disabled':'')).append($('<span/>').addClass('page-link').html('Next'));
+				liPrev.appendTo($('#ul'))
+				.click(e=>{
+					e.preventDefault();
+					if(d.page.existPrev){
+						app.service.my_board({id:d.writer,pageNo:d.page.prevBlock});
+					}
+				});
+				for(let i=d.page.beginPage;i<=d.page.endPage;i++){
+					$('<li/>').addClass('page-item '+((i==d.page.pageNumber)?'active':'')).append(
+						$('<span/>').addClass('page-link').html(i))
+						.appendTo(ul)
+						.click(e=>{
+							e.preventDefault();
+							app.service.my_board({id:d.writer,pageNo:i});
+					});
+				}
+				liNext.appendTo(ul)
+				.click(e=>{
+					e.preventDefault();
+					if(d.page.existNext){
+						app.service.my_board({id:d.writer,pageNo:d.page.nextBlock});
+					}
+				});
+			})
+		})
 	}
 };
 app.router = {

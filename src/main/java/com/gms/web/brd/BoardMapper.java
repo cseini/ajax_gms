@@ -1,6 +1,7 @@
 package com.gms.web.brd;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -15,10 +16,12 @@ public interface BoardMapper {
   public void update(Board vo);
   public void delete(Integer bno);
   public List<Board> listAll(Pagination p);
+  public List<Board> listRetrieve(Map<String,Object>map);
   public List<Board> listPage(int page);
   public List<Board> listCriteria(Criteria cri);
   public int countPaging(Criteria cri);
   public int countAll();
+  public int countRetrieve(Board vo);
   
   //use for dynamic sql
   public List<Board> listSearch(SearchCriteria cri);

@@ -37,4 +37,21 @@ public class BoardCtrl {
 		Util.log.accept("게시글 리스트 :"+ls);
 		return param;
 	}
+	@RequestMapping("/boards/{id}/{pageNo}")
+	public @ResponseBody Map<String,Object> myList(@PathVariable String id, @PathVariable int pageNo){
+		logger.info("\n BoardCtrl :::::::::: {} !!-----","Mylist");
+		Map<String,Object> param=new HashMap<>();
+		brd.setWriter(id);
+		param.put("pageNumber",pageNo);
+		param.put("countRow",brdMap.countRetrieve(brd));
+		page.carryOut(param);
+		param.clear();
+		param.put("writer", id);
+		param.put("beginRow", page.getBeginRow());
+		param.put("endRow", page.getEndRow());
+		List<Board> ls = brdMap.listRetrieve(param);
+		param.put("page", page);
+		param.put("list", ls);
+		return param;
+	}
 }
