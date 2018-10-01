@@ -18,7 +18,7 @@ var ui = {
 				.html('<span class="input-group-text" id="basic-addon1">'
 						+ x.txt
 						+'</span>'
-						+'<input id="'+x.id+'" type="text" placeholder="입금액" class="form-control" aria-label="Username" aria-describedby="basic-addon1"></input>').appendTo(y);
+						+'<input id="'+x.id+'" type="text" placeholder="'+x.placeholder+'" class="form-control" aria-label="Username" aria-describedby="basic-addon1"></input>').appendTo(y);
 		return y;
 	},
 	label : x=>{

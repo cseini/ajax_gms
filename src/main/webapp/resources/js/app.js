@@ -225,7 +225,67 @@ app.service ={
 						$('<td/>').attr('width','5%').html(j.writer),
 						$('<td/>').attr('width','10%').html(j.regdate),
 						$('<td/>').attr('width','5%').html(j.viewcnt)
-						).appendTo($('tbody'));
+						).appendTo($('tbody')).click(e=>{
+							$.getJSON($.ctx()+'/boards/read/'+j.bno,d=>{
+								$('#content').empty();
+								let x = {
+										type : 'default',
+										id : 'read_table',
+										head :'read',
+										body:'글 상세',
+										clazz : 'table table-bordered text-center'
+								}
+								ui.tbl(x).appendTo($('#content'));
+								$('<tr/>').append(($('<td/>').html('글번호')).attr('width','20%')).append($('<td/>').html(d.bno)).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('제목')).attr('width','20%')).append($('<td/>').html(d.title)).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('내용')).attr('width','20%')).append($('<td/>').html(d.content)).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('작성자')).attr('width','20%')).append($('<td/>').html(d.writer)).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('작성일')).attr('width','20%')).append($('<td/>').html(d.regdate)).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('조회수')).attr('width','20%')).append($('<td/>').html(d.viewcnt)).appendTo($('tbody'));
+								
+								ui.button({clazz:'primary',txt:'수정'}).appendTo($('#content'))
+								.click(e=>{
+									$('#content').empty();
+									let x = {
+											type : 'default',
+											id : 'modify_table',
+											head :'modify',
+											body:'글 수정',
+											clazz : 'table table-bordered text-center'
+									}
+									ui.tbl(x).appendTo($('#content'));
+									$('<tr/>').append(($('<td/>').html('글번호')).attr('width','20%')).append($('<td/>').html(d.bno)).appendTo($('tbody'));
+									$('<tr/>').append(($('<td/>').html('제목')).attr('width','20%')).append($('<input/>').attr({id:"title",type:"text"})).appendTo($('tbody'));
+									$('<tr/>').append(($('<td/>').html('내용')).attr('width','20%')).append($('<input/>').attr({id:"u_content",type:"text"})).appendTo($('tbody'));
+									$('<tr/>').append(($('<td/>').html('작성자')).attr('width','20%')).append($('<td/>').html(d.writer)).appendTo($('tbody'));
+									$('<tr/>').append(($('<td/>').html('작성일')).attr('width','20%')).append($('<td/>').html(d.regdate)).appendTo($('tbody'));
+									$('<tr/>').append(($('<td/>').html('조회수')).attr('width','20%')).append($('<td/>').html(d.viewcnt)).appendTo($('tbody'));
+									ui.button({clazz:'primary',txt:'수정하기'}).appendTo($('#content'))
+									.click(e=>{
+										$.ajax({
+											url:$.ctx()+'/boards/update/',
+											method:"post",
+											contentType:"application/json",
+											data:JSON.stringify({'bno':j.bno,
+														'title':$('#title').val(),
+														'content':$('#u_content').val()}),
+											success:d=>{
+												app.service.my_board({id:"A1",pageNo:1});
+											},
+											error:(m1,m2,m3)=>{alert(m3);}
+										});
+									})
+
+								});
+								ui.button({clazz:'primary',txt:'삭제'}).appendTo($('#content'))
+								.click(e=>{
+									$.getJSON($.ctx()+'/boards/delete/'+d.bno);
+									app.service.my_board({id:j.writer,pageNo:1});
+								});
+								
+								
+							});
+						});
 					})
 					ui.page({}).appendTo($('#content'));
 					let ul = $('.pagination');
@@ -279,7 +339,64 @@ app.service ={
 					$('<td/>').attr('width','5%').html(j.writer),
 					$('<td/>').attr('width','10%').html(j.regdate),
 					$('<td/>').attr('width','5%').html(j.viewcnt)
-					).appendTo($('tbody'));
+					).appendTo($('tbody')).click(e=>{
+						$.getJSON($.ctx()+'/boards/read/'+j.bno,d=>{
+							$('#content').empty();
+							let x = {
+									type : 'default',
+									id : 'read_table',
+									head :'read',
+									body:'글 상세',
+									clazz : 'table table-bordered text-center'
+							}
+							ui.tbl(x).appendTo($('#content'));
+							$('<tr/>').append(($('<td/>').html('글번호')).attr('width','20%')).append($('<td/>').html(d.bno)).appendTo($('tbody'));
+							$('<tr/>').append(($('<td/>').html('제목')).attr('width','20%')).append($('<td/>').html(d.title)).appendTo($('tbody'));
+							$('<tr/>').append(($('<td/>').html('내용')).attr('width','20%')).append($('<td/>').html(d.content)).appendTo($('tbody'));
+							$('<tr/>').append(($('<td/>').html('작성자')).attr('width','20%')).append($('<td/>').html(d.writer)).appendTo($('tbody'));
+							$('<tr/>').append(($('<td/>').html('작성일')).attr('width','20%')).append($('<td/>').html(d.regdate)).appendTo($('tbody'));
+							$('<tr/>').append(($('<td/>').html('조회수')).attr('width','20%')).append($('<td/>').html(d.viewcnt)).appendTo($('tbody'));
+							ui.button({clazz:'primary',txt:'수정'}).appendTo($('#content'))
+							.click(e=>{
+								$('#content').empty();
+								let x = {
+										type : 'default',
+										id : 'modify_table',
+										head :'modify',
+										body:'글 수정',
+										clazz : 'table table-bordered text-center'
+								}
+								ui.tbl(x).appendTo($('#content'));
+								$('<tr/>').append(($('<td/>').html('글번호')).attr('width','20%')).append($('<td/>').html(d.bno)).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('제목')).attr('width','20%')).append($('<input/>').attr({id:"title",type:"text"})).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('내용')).attr('width','20%')).append($('<input/>').attr({id:"u_content",type:"text"})).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('작성자')).attr('width','20%')).append($('<td/>').html(d.writer)).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('작성일')).attr('width','20%')).append($('<td/>').html(d.regdate)).appendTo($('tbody'));
+								$('<tr/>').append(($('<td/>').html('조회수')).attr('width','20%')).append($('<td/>').html(d.viewcnt)).appendTo($('tbody'));
+								ui.button({clazz:'primary',txt:'수정하기'}).appendTo($('#content'))
+								.click(e=>{
+									$.ajax({
+										url:$.ctx()+'/boards/update/',
+										method:"post",
+										contentType:"application/json",
+										data:JSON.stringify({'bno':j.bno,
+													'title':$('#title').val(),
+													'content':$('#u_content').val()}),
+										success:d=>{
+											app.service.my_board({id:"A1",pageNo:1});
+										},
+										error:(m1,m2,m3)=>{alert(m3);}
+									});
+								})
+
+							});
+							ui.button({clazz:'primary',txt:'삭제'}).appendTo($('#content'))
+							.click(e=>{
+								$.getJSON($.ctx()+'/boards/delete/'+d.bno);
+								app.service.my_board({id:j.writer,pageNo:1});
+							});
+						});
+					});;
 				})
 				ui.page({}).appendTo($('#content'));
 				let ul = $('.pagination');
@@ -307,6 +424,30 @@ app.service ={
 					if(d.page.existNext){
 						app.service.my_board({id:d.writer,pageNo:d.page.nextBlock});
 					}
+				});
+				ui.button({txt:"글쓰기",clazz:"primary"}).appendTo($('#content'))
+				.click(e=>{
+					$('#content').empty();
+					ui.input({id:"b_title",txt:"제목",placeholder:"제목"}).appendTo($('#content'));
+					ui.input({id:"b_content",txt:"내용",placeholder:"내용을 입력하세요."}).appendTo($('#content'));
+					ui.button({txt:"작성",clazz:"primary"}).appendTo($('#content'))
+					.click(e=>{
+						$.ajax({
+							url:$.ctx()+'/boards/create',
+							method:'post',
+							contentType:"application/json",
+							data:JSON.stringify({
+								title:$('#b_title').val(),
+								content:$('#b_content').val(),
+								writer:d.writer
+							}),
+							success:d=>{
+							 app.service.my_board({id:d.writer,pageNo:1});
+							},
+							error:(m1,m2,m3)=>{alert(m3)
+							}
+						});
+					});
 				});
 			})
 		})
