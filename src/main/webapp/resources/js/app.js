@@ -56,6 +56,38 @@ app.main =(()=>{
 				e.preventDefault();
 				app.permision.join();
 			})
+			$('#drag_btn').addClass('btn btn-danger').click(e=>{
+				e.preventDefault();
+				$('#header').remove();
+				$('#content').html(
+						'<h3>AJAX File upload</h3>'
+						+'<div class="fileDrop"</div>'
+						+'<div class="uploadedList"</div>');
+				$(".fileDrop")
+				.attr('style','width:100%;height:200px;border:1px dotted blue')
+				.on('dragenter dragover',e=>{
+					e.preventDefault();
+				})
+				$(".fileDrop").on('drop',e=>{
+					e.preventDefault();
+					var files = e.originalEvent.dataTransfer.files;
+					var file = files[0];
+					console.log(file);
+					var formData = new FormData();
+					formData.append('file',file);
+					$.ajax({
+						url:$.ctx()+'/uploadAjax',
+						data : formData,
+						dataType:'text',
+						processData:false,
+						contentType:false,
+						type:'post',
+						success:d=>{
+							alert(d);
+						}
+					})
+				})
+			})
 		})
 		.fail(x=>{
 			console.log('화면 구성 실패');
@@ -107,8 +139,7 @@ app.permision = (()=>{
 							}else if(d.PW==='WRONG'){
 								validate ="비밀번호가 틀렸습니다.";	
 							}else{
-								$.cookie('test','test');
-								alert($.cookie('test'));
+								$.cookie("loginID",d.MBR.userid);
 								$.getScript($.script()+'/header.js',()=>{
 									$('#content').html(headerUI());	
 								});
@@ -131,6 +162,7 @@ app.permision = (()=>{
 								ui.anchor({id:'logout_btn',txt:'로그아웃'})
 								.addClass('btn btn-danger btn-lg')
 								.appendTo($('#nav_right')).click(e=>{
+									$.removeCookie('loginID');
 									app.router.home();
 								});
 								$('#add_btn').remove();
@@ -244,51 +276,6 @@ app.service ={
 								$('<tr/>').append(($('<td/>').html('작성자')).attr('width','20%')).append($('<td/>').html(d.writer)).appendTo($('tbody'));
 								$('<tr/>').append(($('<td/>').html('작성일')).attr('width','20%')).append($('<td/>').html(d.regdate)).appendTo($('tbody'));
 								$('<tr/>').append(($('<td/>').html('조회수')).attr('width','20%')).append($('<td/>').html(d.viewcnt)).appendTo($('tbody'));
-								
-								ui.button({clazz:'primary',txt:'수정'}).appendTo($('#content'))
-								.click(e=>{
-									$('#content').empty();
-									let x = {
-											type : 'default',
-											id : 'modify_table',
-											head :'modify',
-											body:'글 수정',
-											clazz : 'table table-bordered text-center'
-									}
-									ui.tbl(x).appendTo($('#content'));
-									$('<tr/>').append(($('<td/>').html('글번호')).attr('width','20%')).append($('<td/>').html(d.bno)).appendTo($('tbody'));
-									$('<tr/>').append(($('<td/>').html('제목')).attr('width','20%')).append($('<input/>').attr({id:"title",type:"text"})).appendTo($('tbody'));
-									$('<tr/>').append(($('<td/>').html('내용')).attr('width','20%')).append($('<input/>').attr({id:"u_content",type:"text"})).appendTo($('tbody'));
-									$('<tr/>').append(($('<td/>').html('작성자')).attr('width','20%')).append($('<td/>').html(d.writer)).appendTo($('tbody'));
-									$('<tr/>').append(($('<td/>').html('작성일')).attr('width','20%')).append($('<td/>').html(d.regdate)).appendTo($('tbody'));
-									$('<tr/>').append(($('<td/>').html('조회수')).attr('width','20%')).append($('<td/>').html(d.viewcnt)).appendTo($('tbody'));
-									ui.button({clazz:'primary',txt:'수정하기'}).appendTo($('#content'))
-									.click(e=>{
-										$.ajax({
-											url:$.ctx()+'/boards/update/',
-											method:"post",
-											contentType:"application/json",
-											data:JSON.stringify({'bno':j.bno,
-														'title':$('#title').val(),
-														'content':$('#u_content').val()}),
-											success:d=>{
-												app.service.my_board({id:"A1",pageNo:1});
-											},
-											error:(m1,m2,m3)=>{alert(m3);}
-										});
-									})
-
-								});
-								ui.button({clazz:'primary',txt:'삭제'}).appendTo($('#content'))
-								.click(e=>{
-									let conf = confirm('삭제하시겠습니까?');
-									if(conf==true){
-										$.getJSON($.ctx()+'/boards/delete/'+d.bno);
-										app.service.my_board({id:j.writer,pageNo:1});
-									}
-								});
-								
-								
 							});
 						});
 					})
@@ -368,10 +355,8 @@ app.service ={
 							ui.button({clazz:'primary',txt:'삭제'}).appendTo($('#content'))
 							.click(e=>{
 								let conf = confirm('삭제하시겠습니까?');
-								if(conf===true){
-									$.getJSON($.ctx()+'/boards/delete/'+d.bno);
-									app.service.my_board({id:j.writer,pageNo:1});
-								}
+								$.getJSON($.ctx()+'/boards/delete/'+$.cookie("loginID")+'/'+d.bno);
+								app.service.my_board({id:$.cookie("loginID"),pageNo:1});
 							});
 						});
 					});;
@@ -384,7 +369,7 @@ app.service ={
 				.click(e=>{
 					e.preventDefault();
 					if(d.page.existPrev){
-						app.service.my_board({id:d.writer,pageNo:d.page.prevBlock});
+						app.service.my_board({id:$.cookie("loginID"),pageNo:d.page.prevBlock});
 					}
 				});
 				for(let i=d.page.beginPage;i<=d.page.endPage;i++){
@@ -393,14 +378,14 @@ app.service ={
 						.appendTo(ul)
 						.click(e=>{
 							e.preventDefault();
-							app.service.my_board({id:d.writer,pageNo:i});
+							app.service.my_board({id:$.cookie("loginID"),pageNo:i});
 					});
 				}
 				liNext.appendTo(ul)
 				.click(e=>{
 					e.preventDefault();
 					if(d.page.existNext){
-						app.service.my_board({id:d.writer,pageNo:d.page.nextBlock});
+						app.service.my_board({id:$.cookie("loginID"),pageNo:d.page.nextBlock});
 					}
 				});
 				ui.button({txt:"글쓰기",clazz:"primary"}).appendTo($('#content'))
@@ -423,14 +408,32 @@ app.service ={
 				data:JSON.stringify({
 					title:$('#b_title').val(),
 					content:$('#b_content').val(),
-					writer:x.writer
+					writer:$.cookie("loginID")
 				}),
 				success:d=>{
-					app.service.my_board({id:d.writer,pageNo:1});
+					app.service.my_board({id:$.cookie("loginID"),pageNo:1});
 				},
 				error:(m1,m2,m3)=>{alert(m3)
 				}
 			});
+		});
+		ui.button({txt:"취소",clazz:"primary"}).appendTo($('#content'))
+		.click(e=>{
+			app.service.my_board({id:$.cookie("loginID"),pageNo:1});
+		});
+		$('<form action="uploadForm" method="post" enctype="multipart/form-data"><input type="file" name="file"><input type="submit"></form>').appendTo($('#content'))
+		.click(e=>{
+			$.ajax({
+		        url:$.ctx()+'/boards/fileupload/',
+		        type:'POST',
+		        data: new FormData($('form')),
+		        async:false,
+		        cache:false,
+		        contentType:false,
+		        processData:false
+		    }).done(function(response){
+		        alert(response);
+		    });
 		});
 	},
 	read:x=>{
@@ -471,7 +474,7 @@ app.service ={
 		})
 		$('<span/>').addClass('btn btn-primary').html('취소').appendTo($('#content'))
 		.click(e=>{
-			app.service.my_board({id:x.writer,pageNo:1})
+			app.service.my_board({id:$.cookie("loginID"),pageNo:1})
 		});
 	},
 	delet_boarde:x=>{

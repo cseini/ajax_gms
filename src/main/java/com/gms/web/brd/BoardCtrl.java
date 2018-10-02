@@ -1,21 +1,28 @@
 package com.gms.web.brd;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gms.web.cmm.Util;
 import com.gms.web.cmm.Util2;
@@ -30,60 +37,105 @@ public class BoardCtrl {
 	@Autowired BoardMapper brdMap;
 	@Autowired Pagination page;
 	@Autowired TxService tx;
+	@Autowired Map<String,Object> map;
+	@Resource(name="uploadPath")
+	private String uploadPath;
 	@GetMapping("/boards/{pageNo}")
 	public @ResponseBody Map<String,Object> list(@PathVariable int pageNo){
 		logger.info("\n BoardCtrl :::::::::: {} !!-----","list");
-		Map<String,Object> param=new HashMap<>();
-		param.put("pageNumber",pageNo);
-		param.put("countRow",brdMap.countAll());
-		page.carryOut(param);
-		param.clear();
+		map.clear();
+		map.put("pageNumber",pageNo);
+		map.put("countRow",brdMap.countAll());
+		page.carryOut(map);
+		map.clear();
 		List<Board> ls = brdMap.listAll(page);
-		param.put("page", page);
-		param.put("list", ls);
+		map.put("page", page);
+		map.put("list", ls);
 		Util.log.accept("게시글 리스트 :"+ls);
-		return param;
+		return map;
 	}
-	@RequestMapping("/boards/{id}/{pageNo}")
+	@GetMapping("/boards/{id}/{pageNo}")
 	public @ResponseBody Map<String,Object> myList(@PathVariable String id, @PathVariable int pageNo){
 		logger.info("\n BoardCtrl :::::::::: {} !!-----","Mylist");
-		Map<String,Object> param=new HashMap<>();
+		map.clear();
 		brd.setWriter(id);
-		param.put("pageNumber",pageNo);
-		param.put("countRow",brdMap.countRetrieve(brd));
-		page.carryOut(param);
-		param.clear();
-		param.put("writer", id);
-		param.put("beginRow", page.getBeginRow());
-		param.put("endRow", page.getEndRow());
-		List<Board> ls = brdMap.listRetrieve(param);
-		param.put("page", page);
-		param.put("list", ls);
-		return param;
+		map.put("pageNumber",pageNo);
+		map.put("countRow",brdMap.countRetrieve(brd));
+		page.carryOut(map);
+		map.clear();
+		map.put("writer", id);
+		map.put("beginRow", page.getBeginRow());
+		map.put("endRow", page.getEndRow());
+		List<Board> ls = brdMap.listRetrieve(map);
+		map.put("page", page);
+		map.put("list", ls);
+		return map;
 	}
 	@PostMapping("/boards/create")
 	public @ResponseBody Board create(@RequestBody Board b){
 		logger.info("\n BoardCtrl :::::::::: {} !!-----","write");
 		b.setRegdate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-		Map<String,Object> map = new HashMap<>();
+		map.clear();
 		map.put("brd", b);
 		map.put("userid", b.getWriter());
-		tx.write(map); 
+		tx.write(map);
 		return b;
 	}
-	@RequestMapping("/boards/read/{bno}")
+	@GetMapping("/boards/read/{bno}")
 	public @ResponseBody Board write(@PathVariable int bno){
-		logger.info("\n BoardCtrl :::::::::: {} !!-----","read");
+		logger.info("\n BoardCtrl :::::::::: {} !!-----","read()");
 		return brdMap.read(bno);
 	}
-	@RequestMapping("/boards/delete/{bno}")
-	public void delete(@PathVariable int bno){
-		logger.info("\n BoardCtrl :::::::::: {} !!-----","delete");
-		brdMap.delete(bno);
+	@GetMapping("/boards/delete/{id}/{bno}")
+	public void delete(@PathVariable String id, @PathVariable int bno){
+		logger.info("\n BoardCtrl :::::::::: {} !!-----","delete()");
+		map.clear();
+		map.put("bno", bno);
+		map.put("userid", id);
+		tx.delete(map);
 	}
 	@PostMapping("/boards/update/")
 	public @ResponseBody void update(@RequestBody Board b){
-		logger.info("\n BoardCtrl :::::::::: {} !!-----","update");
+		logger.info("\n BoardCtrl :::::::::: {} !!-----","update()");
 		brdMap.update(b);
 	}
+	@PostMapping("/boards/fileupload")
+	public Object fileupload(@ModelAttribute("uploadForm") FileForm uploadForm) throws IOException{
+		Util.log.accept(":: BoardCtrl :: fileupload() ");
+		 List<MultipartFile> files = uploadForm.getFiles();
+
+		//success.jsp 로 보낼 파일 이름 저장
+		  List<String> fileNames = new ArrayList<String>();
+		  if (null != files && files.size() > 0) {
+		   for (MultipartFile multipartFile : files) {
+		    String fileName = multipartFile.getOriginalFilename();
+		    String path = uploadPath + fileName;
+
+		File f = new File(path);
+
+		multipartFile.transferTo(f);
+
+		fileNames.add(fileName);
+		Util.log.accept("fileupload SUCCESS !! ");
+		   }
+		  }
+		  //map.addAttribute("files", fileNames);
+		  return "success";
+	}
+    class FileForm {
+        private List<MultipartFile> files;
+        public List<MultipartFile> getFiles() {
+         return files;
+        }
+        public void setFiles(List<MultipartFile> files) {
+         this.files = files;
+        }
+    }
+    @PostMapping("/uploadAjax")
+    public ResponseEntity<String> uploadAjax(MultipartFile file) throws Exception{
+    	Util.log.accept("originaName: " + file.getOriginalFilename());
+    	Util.log.accept("size: " + file.getSize());
+    	Util.log.accept("contentType: " + file.getContentType());
+		return new ResponseEntity<>(file.getOriginalFilename(),HttpStatus.CREATED);
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gms.web.brd.Board;
 import com.gms.web.brd.BoardMapper;
+import com.gms.web.cmm.Util;
 import com.gms.web.point.PointMapper;
 
 @Service
@@ -29,8 +30,9 @@ public class TxService {
 	@Transactional
 	public Map<?,?> delete(Map<?,?> p){
 		map.clear();
+		Util.log.accept(p.get("bno")+"/"+p.get("userid"));
 		brdMapper.delete(Integer.parseInt(p.get("bno").toString()));
-		poMapper.update(map);
+		poMapper.delete(p);
 		map.clear();
 		return map;
 	}

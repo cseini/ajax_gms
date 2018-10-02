@@ -18,7 +18,15 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 	<mvc:annotation-driven />
+	<tx:annotation-driven/>
 	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/"/>
+			<bean class="com.gms.web.interceptors.LoginInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
 	
 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
  		<property name="viewResolvers">
@@ -54,5 +62,40 @@
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean"></constructor-arg>
 	</bean>
 	<mybatis-spring:scan base-package="com.gms.web"/>
-	<tx:annotation-driven/>
+	<bean id="uploadPath" class="java.lang.String">
+		<constructor-arg value="C:\\Users\\csein\\springframework\\gms\\src\\main\\webapp\\resources\\img"/>
+	</bean>	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+	
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587" />
+		<property name="username" value="cseini"/>
+		<property name="password" value="gtp1dl4sl4!"/>
+ 
+		<!-- The name of the property, following JavaBean naming conventions -->
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.transport.protocol">smtp</prop>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.debug">true</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- media play -->
+	<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManager">
+        <constructor-arg>
+            <bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+                <constructor-arg>
+                    <map>
+                        <entry key="atom">
+                            <util:constant static-field="org.springframework.http.MediaType.APPLICATION_ATOM_XML"/>
+                        </entry>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
 </beans>

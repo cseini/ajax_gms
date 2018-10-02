@@ -1,4 +1,4 @@
-package com.gms.web.interceptor;
+package com.gms.web.interceptors;
 
 import java.security.PrivateKey;
 
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
-  private static final String LOGIN = "login";
+/*  private static final String LOGIN = "login";
   private static final Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
   
   
@@ -125,5 +125,5 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
       }
       return bytes;
   }
-
+*/
 }

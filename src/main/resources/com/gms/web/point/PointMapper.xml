@@ -8,4 +8,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		update point set all_point = all_point-30, mbr_point = mbr_point+30
 		where userid = #{userid}
 	</update>
+	<delete id="delete">
+		update point set all_point = all_point+30, mbr_point = mbr_point-30
+		where userid = #{userid}
+	</delete>
 </mapper>
