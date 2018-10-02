@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gms.web.cmm.Util;
 import com.gms.web.cmm.Util2;
 import com.gms.web.page.Pagination;
+import com.gms.web.tx.TxService;
 
 @RestController
 public class BoardCtrl {
@@ -28,6 +29,7 @@ public class BoardCtrl {
 	@Autowired Board brd;
 	@Autowired BoardMapper brdMap;
 	@Autowired Pagination page;
+	@Autowired TxService tx;
 	@GetMapping("/boards/{pageNo}")
 	public @ResponseBody Map<String,Object> list(@PathVariable int pageNo){
 		logger.info("\n BoardCtrl :::::::::: {} !!-----","list");
@@ -62,12 +64,12 @@ public class BoardCtrl {
 	@PostMapping("/boards/create")
 	public @ResponseBody Board create(@RequestBody Board b){
 		logger.info("\n BoardCtrl :::::::::: {} !!-----","write");
-		brd.setRegdate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-		brd.setTitle(b.getTitle());
-		brd.setContent(b.getContent());
-		brd.setWriter(b.getWriter());
-		brdMap.create(brd);
-		return brd;
+		b.setRegdate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+		Map<String,Object> map = new HashMap<>();
+		map.put("brd", b);
+		map.put("userid", b.getWriter());
+		tx.write(map); 
+		return b;
 	}
 	@RequestMapping("/boards/read/{bno}")
 	public @ResponseBody Board write(@PathVariable int bno){

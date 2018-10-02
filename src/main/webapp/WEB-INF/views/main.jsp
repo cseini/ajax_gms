@@ -10,7 +10,7 @@
     <link href="${context}/resources/css/landing-page.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-	<%-- <script src="${context}/resources/js/app.js"></script> --%>
+   <script src="${context}/resources/js/jquery.cookie.js"></script>
 	<script src="${context}/resources/js/app.js"></script>
 </head>
 	
