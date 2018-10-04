@@ -3,17 +3,20 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gms.web.mbr.MemberMapper">
-  <insert id="post" >
-    INSERT INTO member
-    (USERID, PASSWORD, NAME, SSN, AGE, GENDER, TEAMID, ROLL, SUBJECT, EMAIL, PHONE)
-    VALUES (#{userid}, #{password}, #{name}, #{ssn}, #{age}, #{gender}, #{teamid}, #{roll}, #{subject}, #{email}, #{phone})
-  </insert>
-  <select id="list" resultType="com.gms.web.mbr.Member">
-    SELECT USERID, NAME, SSN, AGE, GENDER, TEAMID, ROLL, PHONE, EMAIL 
-    FROM member
-  </select>
-  <select id="get" resultType="com.gms.web.mbr.Member">
-    SELECT USERID, NAME, SSN, AGE, GENDER, TEAMID, ROLL, PHONE, EMAIL
+  <resultMap type="com.gms.web.mbr.Member" id="mbr">
+  	  <id property="userid" column="USERID"></id>
+	  <result property="teamid" column="TEAMID"/>
+	  <result property="name" column="NAME"/>
+	  <result property="ssn" column="SSN"/>
+	  <result property="roll" column="ROLL"/>
+	  <result property="password" column="PASSWORD"/>
+	  <result property="age" column="AGE"/>
+	  <result property="gender" column="GENDER"/>
+	  <result property="phone" column="PHONE"/>
+	  <result property="email" column="EMAIL"/>
+  </resultMap>
+  <select id="get" resultType="mbr">
+    SELECT USERID, PASSWORD, NAME, SSN, AGE, GENDER, TEAMID, ROLL, PHONE, EMAIL
     FROM member
     <where>
     	<if test=" userid != null and userid != '' ">
@@ -24,6 +27,15 @@
     	</if>
     </where>
   </select>
+  <insert id="post" >
+    INSERT INTO member
+    (USERID, PASSWORD, NAME, SSN, AGE, GENDER, TEAMID, ROLL, SUBJECT, EMAIL, PHONE)
+    VALUES (#{userid}, #{password}, #{name}, #{ssn}, #{age}, #{gender}, #{teamid}, #{roll}, #{subject}, #{email}, #{phone})
+  </insert>
+  <select id="list" resultType="mbr">
+    SELECT USERID, NAME, SSN, AGE, GENDER, TEAMID, ROLL, PHONE, EMAIL 
+    FROM member
+  </select>
   <select id="count" resultType="int">
   	SELECT COUNT(*) FROM MEMBER
   	<where>
@@ -32,7 +44,7 @@
 	  	</if>
   	</where>
   </select>
-  <update id="update" parameterType="com.gms.web.mbr.Member">
+  <update id="update" parameterType="mbr">
 	  UPDATE member SET
 	    PASSWORD = #{password},
 	    TEAMID = #{teamid},

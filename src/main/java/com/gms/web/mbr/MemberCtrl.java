@@ -7,6 +7,7 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gms.web.brd.Board;
-import com.gms.web.brd.BoardMapper;
 import com.gms.web.cmm.Util2;
 
 @RestController
@@ -26,6 +25,7 @@ public class MemberCtrl {
 	@Autowired Member mbr;
 	@Autowired MemberMapper mbrMap;
 	@Autowired Util2 util2;
+	@Autowired HashMap<String,Object>map;
 	@PostMapping("/join")
 	public @ResponseBody void join(@RequestBody Member param) {
 		logger.info("\n--------- MemberController {} !!-----","join()");
@@ -50,6 +50,12 @@ public class MemberCtrl {
 		param.setUserid(user.getUserid());
 		mbrMap.delete(param);
 		return "redirect:/";
+	}
+	@GetMapping("/auth")
+	public @ResponseBody Map<String,Object> auth(){
+		System.out.println("auth 컨트롤러");
+		map.put("", "");
+		return map;
 	}
 	@PostMapping("/login")
 	public @ResponseBody Map<String,Object> login(
